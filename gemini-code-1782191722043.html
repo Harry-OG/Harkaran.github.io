@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShieldUp - Digital Safety & Wellbeing</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0d9488;
+            --background: #f1f5f9;
+            --dark: #0f172a;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Mobile Device Frame Container */
+        .phone-container {
+            width: 100%;
+            max-width: 410px;
+            height: 840px;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 12px solid var(--dark);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* App Header */
+        .app-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Main Content Screen Area */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            padding-bottom: 80px; /* Space for nav bar */
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 65px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            border: none;
+            background: none;
+            color: #64748b;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .nav-item span {
+            font-size: 1.2rem;
+        }
+
+        /* Threat Cards UI */
+        .threat-card {
+            background: #fff;
+            border-left: 5px solid var(--danger);
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .threat-card.advisory {
+            border-left-color: var(--warning);
+        }
+        .badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .badge.critical { background-color: var(--danger); }
+        .badge.warn { background-color: var(--warning); }
+
+        /* Chatbot UI */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 650px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .msg {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .msg.bot {
+            background: #e2e8f0;
+            align-self: flex-start;
+        }
+        .msg.user {
+            background: var(--secondary);
+            color: white;
+            align-self: flex-end;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+            padding-top: 10px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            outline: none;
+        }
+        .chat-input-area button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Wellbeing Hub UI */
+        .wellbeing-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .btn-action {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <div class="app-header" id="app-title">🛡️ Threat Radar</div>
+
+        <div class="app-content">
+            
+            <div id="screen-radar" class="screen active">
+                <div class="threat-card">
+                    <span class="badge critical">CRITICAL</span>
+                    <h3>AI Voice Cloning Fraud</h3>
+                    <p style="font-size: 0.85rem; margin-top: 4px; color: #475569;">Scammers use 3 seconds of audio to clone a relative's voice and ask for emergency money. Always verify via an alternate channel!</p>
+                </div>
+                <div class="threat-card">
+                    <span class="badge critical">CRITICAL</span>
+                    <h3>Part-Time Job Scam</h3>
+                    <p style="font-size: 0.85rem; margin-top: 4px; color: #475569;">Telegram groups offering easy money for liking videos. They will ask you to deposit money to unlock high rewards. Avoid!</p>
+                </div>
+                <div class="threat-card advisory">
+                    <span class="badge warn">ADVISORY</span>
+                    <h3>Courier Parcel Scams</h3>
+                    <p style="font-size: 0.85rem; margin-top: 4px; color: #475569;">Fake IVR calls claiming illegal items were found in your package. Real law enforcement never demands online transfers over Skype calls.</p>
+                </div>
+            </div>
+
+            <div id="screen-bot" class="screen">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-box">
+                        <div class="msg bot">🤖 Hi! I am GuardBot. Ask me about <b>scams</b>, <b>passwords</b>, or cyber <b>careers</b>!</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="user-input" placeholder="Type 'help' or your query...">
+                        <button onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="screen-wellness" class="screen">
+                <div class="wellbeing-card">
+                    <h3>👀 Digital Eye Strain Rule</h3>
+                    <p style="font-size: 0.85rem; color: #475569; margin-top: 5px;">Follow the 20-20-20 rule. Every 20 minutes, look at something 20 feet away for 20 seconds.</p>
+                    <button class="btn-action" onclick="alert('Great job! Take a deep breath and look out of a window for 20 seconds. 🌲')">Start Break Now</button>
+                </div>
+                <div class="wellbeing-card">
+                    <h3>📱 Screen Time Checklist</h3>
+                    <p style="font-size: 0.85rem; color: #475569; margin-top: 5px;">Did you know using phones 1 hour before bed ruins sleep cycles? Turn on DND mode.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="nav-bar">
+            <button class="nav-item active" onclick="switchScreen('radar', '🛡️ Threat Radar', this)">
+                <span>📡</span>Radar
+            </button>
+            <button class="nav-item" onclick="switchScreen('bot', '🤖 GuardBot Assistant', this)">
+                <span>💬</span>GuardBot
+            </button>
+            <button class="nav-item" onclick="switchScreen('wellness', '🌱 Digital Wellbeing', this)">
+                <span>🧘</span>Wellbeing
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // Screen Navigation Engine
+        function switchScreen(screenId, title, element) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById('screen-' + screenId).classList.add('active');
+            document.getElementById('app-title').innerText = title;
+            element.classList.add('active');
+        }
+
+        // Logic Translated From Python GuardBot Rule Engine
+        function guardBotResponse(query) {
+            let text = query.toLowerCase();
+            
+            if (text.includes("scam") || text.includes("fraud")) {
+                return "⚠️ <b>Tip:</b> Never share OTPs, UPI PINs, or click on urgent-sounding links claiming your bank account or cellular SIM card is blocked!";
+            } else if (text.includes("password")) {
+                return "🔐 <b>Tip:</b> Build strong passwords using combinations of mixed-case text, numbers, and symbols. Switch to biometric Passkeys where available.";
+            } else if (text.includes("career") || text.includes("cybersecurity")) {
+                return "🚀 <b>Career Pathway:</b> Cybersecurity is rapidly expanding! Look into professional paths like Ethical Hacker, Digital Forensics expert, or Cloud Security Architect.";
+            } else if (text.includes("help")) {
+                return "I can support you with: <br>1. <b>Scam</b> Prevention<br>2. <b>Password</b> Safety<br>3. Cyber <b>Careers</b>.<br><br>Type any of those keywords!";
+            } else {
+                return "🤖 I'm still training! For urgent safety support, report active concerns to your national cybercrime reporting structure or local cyber cell.";
+            }
+        }
+
+        // Send & Append Messages
+        function sendMessage() {
+            let inputField = document.getElementById('user-input');
+            let query = inputField.value.trim();
+            if(!query) return;
+
+            let chatBox = document.getElementById('chat-box');
+
+            // 1. User Message
+            let userDiv = document.createElement('div');
+            userDiv.className = "msg user";
+            userDiv.innerText = query;
+            chatBox.appendChild(userDiv);
+
+            inputField.value = ""; // Clear input field
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto Scroll Down
+
+            // 2. Bot response processing delay animation imitation
+            setTimeout(() => {
+                let botDiv = document.createElement('div');
+                botDiv.className = "msg bot";
+                botDiv.innerHTML = guardBotResponse(query);
+                chatBox.appendChild(botDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 400);
+        }
+
+        // Listen for ENTER key events
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
